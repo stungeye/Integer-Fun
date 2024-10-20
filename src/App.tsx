@@ -101,6 +101,9 @@ const App = () => {
   const [userAnswer, setUserAnswer] = useState(0);
   const [feedback, setFeedback] = useState('');
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [streak, setStreak] = useState(0);
+  const [isCheckDisabled, setIsCheckDisabled] = useState(false);
+  const [isNextDisabled, setIsNextDisabled] = useState(true);  // New state for Next Question button
 
   useEffect(() => {
     setUserAnswer(question.num1);
@@ -113,18 +116,24 @@ const App = () => {
     if (difference === 0) {
       setIsCorrect(true);
       setFeedback('Correct! Well done!');
+      setStreak(prevStreak => prevStreak + 1);
+      setIsCheckDisabled(true);
+      setIsNextDisabled(false);  // Enable the Next Question button
       playSound(true);
     } else if (difference === 2) {
       setIsCorrect(false);
       setFeedback('Warm! Try again.');
+      setStreak(0);  // Reset streak
       playSound(false);
     } else if (difference === 1) {
       setIsCorrect(false);
       setFeedback('Hot! Try again.');
+      setStreak(0);  // Reset streak
       playSound(false);
     } else {
       setIsCorrect(false);
       setFeedback('Incorrect. Try again!');
+      setStreak(0);  // Reset streak
       playSound(false);
     }
   };
@@ -135,24 +144,27 @@ const App = () => {
     setUserAnswer(newQuestion.num1);
     setFeedback('');
     setIsCorrect(null);
+    setIsCheckDisabled(false);
+    setIsNextDisabled(true);  // Disable the Next Question button again
   };
 
   return (
     <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h1 className="text-3xl font-bold mb-6 text-center">Integer Fun</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Math Practice</h1>
       <div className="text-3xl font-bold mb-6 text-center">
         {question.displayNum1} {question.displayOperation} {question.displayNum2} = {userAnswer === question.num1 ? '?' : userAnswer}
       </div>
       <NumberLine min={-20} max={20} value={userAnswer} onChange={setUserAnswer} startNumber={question.num1} />
-      <div className="flex justify-center space-x-4 mt-14">
-        <Button onClick={checkAnswer} size="lg">Check Answer</Button>
-        <Button onClick={nextQuestion} variant="outline" size="lg">Next Question</Button>
+      <div className="text-xl mb-8 mt-8 text-center">Your answer: {userAnswer}</div>
+      <div className="flex justify-center space-x-4">
+        <Button onClick={checkAnswer} size="lg" disabled={isCheckDisabled}>Check Answer</Button>
+        <Button onClick={nextQuestion} variant="outline" size="lg" disabled={isNextDisabled}>Next Question</Button>
       </div>
       {feedback && (
         <div className={`mt-6 text-xl font-semibold text-center ${
           isCorrect ? 'text-green-500' : 'text-red-700'
         }`}>
-          {feedback}
+          {feedback} {isCorrect ? '🎉' : '🔥'} {streak > 0 ? `Streak: ${streak}` : ''}
         </div>
       )}
     </div>
