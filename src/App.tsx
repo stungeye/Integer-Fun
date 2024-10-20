@@ -11,7 +11,7 @@ const generateQuestion = () => {
   let displayNum2 = num2 < 0 ? `(${num2})` : num2;
   let displayOperation = operation;
 
-  if (operation === '-' && Math.random() < 0.5) {
+  if (operation === '-' && num2 > 0 && Math.random() < 0.5) {
     displayOperation = '+';
     displayNum2 = `(${-num2})`;
   }
