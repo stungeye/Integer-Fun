@@ -150,15 +150,13 @@ const App = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h1 className="text-3xl font-bold mb-6 text-center">Math Practice</h1>
       <div className="text-3xl font-bold mb-6 text-center">
         {question.displayNum1} {question.displayOperation} {question.displayNum2} = {userAnswer === question.num1 ? '?' : userAnswer}
       </div>
       <NumberLine min={-20} max={20} value={userAnswer} onChange={setUserAnswer} startNumber={question.num1} />
-      <div className="text-xl mb-8 mt-8 text-center">Your answer: {userAnswer}</div>
-      <div className="flex justify-center space-x-4">
-        <Button onClick={checkAnswer} size="lg" disabled={isCheckDisabled}>Check Answer</Button>
-        <Button onClick={nextQuestion} variant="outline" size="lg" disabled={isNextDisabled}>Next Question</Button>
+      <div className="flex mt-12 justify-center space-x-4">
+        {!isCheckDisabled && <Button onClick={checkAnswer} size="lg" disabled={isCheckDisabled}>Check Answer</Button>}
+        {!isNextDisabled && <Button onClick={nextQuestion} size="lg" disabled={isNextDisabled}>Next Question</Button>}
       </div>
       {feedback && (
         <div className={`mt-6 text-xl font-semibold text-center ${
