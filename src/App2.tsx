@@ -155,8 +155,6 @@ function App2() {
     draw(e);
   };
 
-  const stopDrawing = () => setIsDrawing(false);
-
   const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement> | MouseEvent | TouchEvent) => {
     if (!isDrawing) return;
     const canvas = canvasRef.current;
