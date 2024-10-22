@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
+import DrawingCanvas, { DrawingCanvasRef } from '@/components/DrawingCanvas'
 import './App.css'
 
 function App2() {
@@ -10,8 +11,13 @@ function App2() {
   const [isCheckDisabled, setIsCheckDisabled] = useState(false)
   const [isNextDisabled, setIsNextDisabled] = useState(true)
   const [correctAnswer, setCorrectAnswer] = useState<number | null>(null)
-  const [isDrawing, setIsDrawing] = useState(false)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const canvasRef = useRef<DrawingCanvasRef>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
+  
+  const handleClearCanvas = () => {
+    canvasRef.current?.clearCanvas();
+  }
 
   const generateQuestion = () => {
     const getRandomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -81,7 +87,6 @@ function App2() {
     setFeedback('');
     setIsCheckDisabled(false);
     setIsNextDisabled(true);
-    clearCanvas();
   }
 
   const calculateAnswer = (question: string): number => {
@@ -106,6 +111,7 @@ function App2() {
 
   const nextQuestion = () => {
     generateQuestion()
+    handleClearCanvas()
     setIsCheckDisabled(false)
     setIsNextDisabled(true)
   }
@@ -143,59 +149,21 @@ function App2() {
   }, [])
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight / 2; // Adjust as needed
-    }
-  }, []);
-
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    setIsDrawing(true);
-    draw(e);
-  };
-
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement> | MouseEvent | TouchEvent) => {
-    if (!isDrawing) return;
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (ctx && canvas) {
-      ctx.lineWidth = 2;
-      ctx.lineCap = 'round';
-      ctx.strokeStyle = '#000';
-
-      let x, y;
-      if ('touches' in e) {
-        x = e.touches[0].clientX - canvas.offsetLeft;
-        y = e.touches[0].clientY - canvas.offsetTop;
-      } else {
-        x = (e as MouseEvent).clientX - canvas.offsetLeft;
-        y = (e as MouseEvent).clientY - canvas.offsetTop;
+    const updateCanvasSize = () => {
+      if (containerRef.current) {
+        const { width } = containerRef.current.getBoundingClientRect()
+        setCanvasSize({ width, height: window.innerHeight / 2 })
       }
-
-      ctx.lineTo(x, y);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(x, y);
     }
-  };
 
-  const clearCanvas = () => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (ctx && canvas) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-  };
+    updateCanvasSize()
+    window.addEventListener('resize', updateCanvasSize)
 
-  useEffect(() => {
-    const handleMouseUp = () => setIsDrawing(false);
-    window.addEventListener('mouseup', handleMouseUp);
-    return () => window.removeEventListener('mouseup', handleMouseUp);
-  }, []);
+    return () => window.removeEventListener('resize', updateCanvasSize)
+  }, [])
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div ref={containerRef} className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
       <h1 className="text-3xl font-bold mb-6 text-center">PEDMAS Practice</h1>
       <p className="text-xl mb-4 text-center">Score: {score}</p>
       <div className="text-3xl font-bold mb-6 text-center">
@@ -232,14 +200,10 @@ function App2() {
           {feedback}
         </div>
       )}
-      <button onClick={clearCanvas}>Clear Canvas</button>
-      <canvas
-        ref={canvasRef}
-        onMouseDown={startDrawing}
-        onMouseMove={draw}
-        onTouchStart={startDrawing}
-        onTouchMove={draw}
-        style={{ border: '1px solid black', touchAction: 'none' }}
+      <DrawingCanvas 
+        ref={canvasRef} 
+        width={canvasSize.width} 
+        height={canvasSize.height} 
       />
     </div>
   )
