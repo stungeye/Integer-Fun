@@ -24,26 +24,28 @@ const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({ width,
     if (canvas) {
       canvas.width = width;
       canvas.height = height;
+      
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        ctx.clearRect(0, 0, width, height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
     }
   }, [width, height]);
 
-  const getPosition = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement> | MouseEvent | TouchEvent): Position => {
+  const getPosition = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>): Position => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
 
+    const rect = canvas.getBoundingClientRect();
     if ('touches' in e) {
       return {
-        x: e.touches[0].clientX - canvas.offsetLeft,
-        y: e.touches[0].clientY - canvas.offsetTop
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top
       };
     } else {
       return {
-        x: (e as MouseEvent).clientX - canvas.offsetLeft,
-        y: (e as MouseEvent).clientY - canvas.offsetTop
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
       };
     }
   };
@@ -52,16 +54,9 @@ const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({ width,
     const position = getPosition(e);
     setIsDrawing(true);
     setLastPosition(position);
-
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (ctx) {
-      ctx.beginPath();
-      ctx.moveTo(position.x, position.y);
-    }
   };
 
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement> | MouseEvent | TouchEvent) => {
+  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (!isDrawing || !lastPosition) return;
 
     const canvas = canvasRef.current;
@@ -69,13 +64,12 @@ const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({ width,
     if (ctx && canvas) {
       const currentPosition = getPosition(e);
 
-      ctx.lineWidth = 2;
-      ctx.lineCap = 'round';
-      ctx.strokeStyle = '#000';
-
       ctx.beginPath();
       ctx.moveTo(lastPosition.x, lastPosition.y);
       ctx.lineTo(currentPosition.x, currentPosition.y);
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
       ctx.stroke();
 
       setLastPosition(currentPosition);
@@ -115,7 +109,7 @@ const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({ width,
       onMouseMove={draw}
       onTouchStart={startDrawing}
       onTouchMove={draw}
-      style={{ width: '100%', height: '100%', margin: '40px 0', border: '1px solid grey', touchAction: 'none' }}
+      style={{ touchAction: 'none', width: '100%', height: '100%' }}
     />
   );
 });

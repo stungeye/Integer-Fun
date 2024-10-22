@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import DrawingCanvas, { DrawingCanvasRef } from '@/components/DrawingCanvas'
 import './App.css'
@@ -100,12 +100,13 @@ function App2() {
   const checkAnswer = () => {
     const correctAnswer = calculateAnswer(question)
     if (parseFloat(userAnswer) === correctAnswer) {
-      setFeedback('Correct! Well done! 🎉')
+      setFeedback('Correct! 🎉')
       setScore(score + 1)
       setIsCheckDisabled(true)
       setIsNextDisabled(false)
     } else {
-      setFeedback(`Incorrect. Try again! 🔥`)
+      setScore(0);
+      setFeedback('Incorrect. 🔥')
     }
   }
 
@@ -140,6 +141,13 @@ function App2() {
     if (correctAnswer !== null) {
       setScore(0);
       setUserAnswer(correctAnswer.toString());
+      setFeedback('')
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      checkAnswer();
     }
   };
 
@@ -151,32 +159,50 @@ function App2() {
   useEffect(() => {
     const updateCanvasSize = () => {
       if (containerRef.current) {
-        const { width } = containerRef.current.getBoundingClientRect()
-        setCanvasSize({ width, height: window.innerHeight / 2 })
+        const { top } = containerRef.current.getBoundingClientRect();
+        const availableHeight = window.innerHeight - top;
+        setCanvasSize({
+          width: containerRef.current.offsetWidth,
+          height: Math.max(availableHeight, 150) // Ensure a minimum height of 150px
+        });
       }
-    }
+    };
 
-    updateCanvasSize()
-    window.addEventListener('resize', updateCanvasSize)
+    updateCanvasSize();
+    window.addEventListener('resize', updateCanvasSize);
 
-    return () => window.removeEventListener('resize', updateCanvasSize)
-  }, [])
+    return () => window.removeEventListener('resize', updateCanvasSize);
+  }, []);
 
   return (
-    <div ref={containerRef} className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h1 className="text-3xl font-bold mb-6 text-center">PEDMAS Practice</h1>
-      <p className="text-xl mb-4 text-center">Score: {score}</p>
+    <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md relative">
+      
+      {/* Score/Streak div positioned in the upper right corner */}
+      <div className="absolute top-4 right-4 bg-gray-100 p-2 rounded-md shadow">
+        <p className="text-lg font-semibold">Streak: {score}</p>
+        {/* Add streak information here if you have it */}
+      </div>
+
       <div className="text-3xl font-bold mb-6 text-center">
-        Solve: <span dangerouslySetInnerHTML={{ __html: formatQuestion(question) }} />
+        <span dangerouslySetInnerHTML={{ __html: formatQuestion(question) }} /> = {userAnswer ? userAnswer : '?'}
+        {feedback && (
+          <div className={`text-3xl font-semibold inline-block ml-4 ${
+            feedback.includes('Correct') ? 'text-green-500' : 'text-red-700'
+          }`}>
+            {feedback}
+          </div>
+        )}
+
       </div>
       <input
         type="number"
         value={userAnswer}
         onChange={(e) => setUserAnswer(e.target.value)}
+        onKeyPress={handleKeyPress}
         placeholder="Enter your answer"
         className="w-full p-2 mb-4 text-xl border rounded"
       />
-      <div className="flex mt-12 justify-center space-x-4">
+      <div className="flex mt-4 mb-4 justify-center space-x-4">
         {!isCheckDisabled && (
           <Button onClick={checkAnswer} size="lg">
             Check Answer
@@ -193,18 +219,21 @@ function App2() {
           </Button>
         )}
       </div>
-      {feedback && (
-        <div className={`mt-6 text-xl font-semibold text-center ${
-          feedback.includes('Correct') ? 'text-green-500' : 'text-red-700'
-        }`}>
-          {feedback}
-        </div>
-      )}
-      <DrawingCanvas 
-        ref={canvasRef} 
-        width={canvasSize.width} 
-        height={canvasSize.height} 
-      />
+      <div ref={containerRef} className="relative" style={{ width: '100%', height: `${canvasSize.height}px` }}>
+        <Button 
+          onClick={handleClearCanvas}
+          className="absolute top-2 right-2 z-10"
+          size="sm"
+          variant="outline"
+        >
+          Clear
+        </Button>
+        <DrawingCanvas 
+          ref={canvasRef} 
+          width={canvasSize.width} 
+          height={canvasSize.height} 
+        />
+      </div>
     </div>
   )
 }
