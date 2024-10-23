@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import DrawingCanvas, { DrawingCanvasRef } from '@/components/DrawingCanvas'
 import './App.css'
+import { playSound } from '@/utils/playSound'
 
 function App2() {
   const [question, setQuestion] = useState('')
@@ -99,15 +100,22 @@ function App2() {
   }
 
   const checkAnswer = () => {
+    if (userAnswer === '') {
+      focusInput();
+      return;
+    }
+    
     const correctAnswer = calculateAnswer(question)
     if (parseFloat(userAnswer) === correctAnswer) {
       setFeedback('Correct! 🎉')
       setScore(score + 1)
       setIsCheckDisabled(true)
       setIsNextDisabled(false)
+      playSound(true);
     } else {
       setScore(0);
       setFeedback('Incorrect. 🔥')
+      playSound(false);
     }
   }
 

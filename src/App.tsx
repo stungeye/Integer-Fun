@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { playSound } from '@/utils/playSound';
 
 const generateQuestion = () => {
   const operations = ['+', '-'];
@@ -70,32 +71,6 @@ const NumberLine = ({ min, max, value, onChange, startNumber }: { min: number, m
   );
 };
 
-const playSound = (isCorrect: boolean) => {
-  const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-  const audioContext = new AudioContext();
-  const oscillator = audioContext.createOscillator();
-  const gainNode = audioContext.createGain();
-
-  oscillator.connect(gainNode);
-  gainNode.connect(audioContext.destination);
-
-  if (isCorrect) {
-    oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
-    oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
-    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.3);
-  } else {
-    oscillator.frequency.setValueAtTime(349.23, audioContext.currentTime); // F4
-    oscillator.frequency.setValueAtTime(293.66, audioContext.currentTime + 0.1); // D4
-    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.3);
-  }
-};
-
 const App = () => {
   const [question, setQuestion] = useState(generateQuestion());
   const [userAnswer, setUserAnswer] = useState(0);
@@ -149,7 +124,14 @@ const App = () => {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md relative">
+      {/* Add this div for the streak display */}
+      <div className="absolute top-4 right-4">
+        <div className="bg-gray-100 p-2 rounded-md shadow">
+          <p className="text-lg font-semibold">Streak: {streak}</p>
+        </div>
+      </div>
+
       <div className="text-3xl font-bold mb-6 text-center">
         {question.displayNum1} {question.displayOperation} {question.displayNum2} = {userAnswer === question.num1 ? '?' : userAnswer}
       </div>
@@ -162,7 +144,7 @@ const App = () => {
         <div className={`mt-6 text-xl font-semibold text-center ${
           isCorrect ? 'text-green-500' : 'text-red-700'
         }`}>
-          {feedback} {isCorrect ? '🎉' : '🔥'} {streak > 0 ? `Streak: ${streak}` : ''}
+          {feedback} {isCorrect ? '🎉' : '🔥'}
         </div>
       )}
     </div>
