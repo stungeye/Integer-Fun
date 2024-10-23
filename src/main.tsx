@@ -10,7 +10,7 @@ const AppSelector = () => {
   return (
     <div>
       <select value={selectedApp} onChange={(e) => setSelectedApp(e.target.value)}>
-        <option value="basic">Integer Addition / Subtraction</option>
+        <option value="basic">Addition / Subtraction</option>
         <option value="pedmas">PEDMAS</option>
       </select>
       {selectedApp === 'basic' ? <App /> : <App2 />}

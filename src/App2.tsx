@@ -39,7 +39,6 @@ function App2() {
     const generateExpression = (): string => {
       // Determine if we're generating a two-term or three-term expression
       const isThreeTerm = Math.random() < 0.8; // 50% chance for three-term expressions
-      console.log('isThreeTerm', isThreeTerm)
       const op1 = getRandomOperator(true);
       if (op1 === '^') {
         const base = getRandomInt(2, 6);
@@ -65,9 +64,6 @@ function App2() {
             if (op1 === '*' || op1 === '^' || op1 === '/') {
               divisorSource = Math.abs(Math.round(calculateAnswer(expression)));
             } else {
-              console.log('expression', expression)
-              console.log('expression.split', expression.split(' '))
-              console.log('expression.split[2]', expression.split(' ')[2])
               divisorSource = Math.abs(parseInt(eval(expression.split(' ')[2])));
             }
             const factors = getEvenFactors(divisorSource);
@@ -104,7 +100,7 @@ function App2() {
       focusInput();
       return;
     }
-    
+
     const correctAnswer = calculateAnswer(question)
     if (parseFloat(userAnswer) === correctAnswer) {
       setFeedback('Correct! 🎉')
