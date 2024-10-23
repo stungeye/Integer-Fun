@@ -14,7 +14,8 @@ function App2() {
   const canvasRef = useRef<DrawingCanvasRef>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
-  
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const handleClearCanvas = () => {
     canvasRef.current?.clearCanvas();
   }
@@ -115,6 +116,7 @@ function App2() {
     handleClearCanvas()
     setIsCheckDisabled(false)
     setIsNextDisabled(true)
+    focusInput(); // Focus the input after generating a new question
   }
 
   const formatQuestion = (question: string): string => {
@@ -147,14 +149,20 @@ function App2() {
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      checkAnswer();
+      if (!isCheckDisabled) {
+        checkAnswer();
+      }
+      if (!isNextDisabled) {
+        nextQuestion();
+      }
     }
   };
 
   // Generate the first question when the component mounts
   useEffect(() => {
-    nextQuestion()
-  }, [])
+    nextQuestion();
+    focusInput(); // Focus the input when the component mounts
+  }, []);
 
   useEffect(() => {
     const updateCanvasSize = () => {
@@ -174,13 +182,25 @@ function App2() {
     return () => window.removeEventListener('resize', updateCanvasSize);
   }, []);
 
+  const focusInput = () => {
+    inputRef.current?.focus();
+  };
+
   return (
     <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md relative">
       
       {/* Score/Streak div positioned in the upper right corner */}
-      <div className="absolute top-4 right-4 bg-gray-100 p-2 rounded-md shadow">
-        <p className="text-lg font-semibold">Streak: {score}</p>
-        {/* Add streak information here if you have it */}
+      <div className="absolute top-4 right-4 flex flex-row">
+        {!isCheckDisabled && feedback.includes('Incorrect') && (
+          // Show Answer button in blue color
+          <Button onClick={fillCorrectAnswer} size="lg" variant="destructive" className="inline-block mr-4">
+            Show Answer
+          </Button>
+        )}
+
+        <div className="bg-gray-100 p-2 rounded-md shadow inline-block">
+          <p className="text-lg font-semibold">Streak: {score}</p>
+        </div>
       </div>
 
       <div className="text-3xl font-bold mb-6 text-center">
@@ -195,10 +215,11 @@ function App2() {
 
       </div>
       <input
+        ref={inputRef}
         type="number"
         value={userAnswer}
-        onChange={(e) => setUserAnswer(e.target.value)}
-        onKeyPress={handleKeyPress}
+        onChange={(e) => { setUserAnswer(e.target.value); setFeedback('') }}
+        onKeyDown={handleKeyPress}
         placeholder="Enter your answer"
         className="w-full p-2 mb-4 text-xl border rounded"
       />
@@ -213,12 +234,7 @@ function App2() {
             Next Question
           </Button>
         )}
-        {!isCheckDisabled && (
-        <Button onClick={fillCorrectAnswer} size="lg">
-            Fill Correct Answer
-          </Button>
-        )}
-      </div>
+              </div>
       <div ref={containerRef} className="relative" style={{ width: '100%', height: `${canvasSize.height}px` }}>
         <Button 
           onClick={handleClearCanvas}
