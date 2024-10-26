@@ -57,8 +57,11 @@ function App3() {
       console.log("Voices:", voices)
       console.log("Available voices:", voices.map(v => `${v.name} (${v.lang})`));
 
-      // Find a voice that matches the language
-      const voice = voices.find(v => v.lang.includes(currentWordList.language))
+      let voice = voices.find(v => v.name === 'Amélie' && v.lang.includes(currentWordList.language))
+      if (!voice) {
+        // If no Amelie voice is found, find a voice that matches the language
+        voice = voices.find(v => v.lang.includes(currentWordList.language))
+      }
       if (voice) {
         utterance.voice = voice
         console.log("Voice found:", voice)
@@ -131,7 +134,7 @@ function App3() {
 
       <div className="text-3xl font-bold mb-6 text-center">
         {currentWordList && (
-          <p>Spell the word: <Button onClick={() => speakWord(currentWord)}>🔊 Listen</Button></p>
+          <p><Button onClick={() => speakWord(currentWord)}>🔊 Listen</Button></p>
         )}
         {feedback && (
           <div className={`text-3xl font-semibold inline-block ml-4 ${
