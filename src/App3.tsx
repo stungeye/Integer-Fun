@@ -14,6 +14,9 @@ function App3() {
   const [userInput, setUserInput] = useState('')
   // const [voice, setVoice] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+  // detect ios safari
+  const isIosSafari = /iPad|iPhone|iPod/.test(navigator.userAgent)
+
 
   const checkAnswer = () => {
     if (userInput.trim() === '') {
@@ -144,15 +147,15 @@ function App3() {
 
       <div className="absolute top-4 right-4">
         <div className="bg-gray-100 p-2 rounded-md shadow inline-block">
-          <p className="text-lg font-semibold">Streak: {score}</p>
+          <p className="text-lg font-semibold"> {isIosSafari ? '🍎' : ''} Streak: {score}</p>
         </div>
       </div>
 
       <div className="text-3xl font-bold mt-6 mb-6 text-center">
         {currentWordList && (
           <>
-            <Button onClick={() => { speakWord(currentWord); setFeedback(''); focusInput(); }}>🔊 Listen</Button>
-            <Button onClick={() => { speakWord(currentWord, 0.3); setFeedback(''); focusInput(); }}>🔊 Slow</Button>
+            <Button onClick={() => { speakWord(currentWord); setFeedback(''); focusInput(); }}>🔊 Listen</Button> &nbsp; 
+            <Button onClick={() => { speakWord(currentWord, isIosSafari ? 0.1 : 0.4); setFeedback(''); focusInput(); }}>🔊 Slow</Button>
           </>
         )}
         {feedback && (
