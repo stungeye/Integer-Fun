@@ -148,7 +148,7 @@ function App3() {
         </div>
       </div>
 
-      <div className="text-3xl font-bold mb-6 text-center">
+      <div className="text-3xl font-bold mt-6 mb-6 text-center">
         {currentWordList && (
           <>
             <Button onClick={() => { speakWord(currentWord); setFeedback(''); focusInput(); }}>🔊 Listen</Button>
