@@ -50,7 +50,7 @@ function App3() {
     }
   }
 
-  const speakWord = (word: string, rate: number = 1) => {
+  const speakWord = (word: string, rate: number = 0.75) => {
     if (currentWordList && 'speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(word)
       utterance.lang = currentWordList.language
@@ -152,7 +152,7 @@ function App3() {
         {currentWordList && (
           <>
             <Button onClick={() => { speakWord(currentWord); setFeedback(''); focusInput(); }}>🔊 Listen</Button>
-            <Button onClick={() => { speakWord(currentWord, 0.5); setFeedback(''); focusInput(); }}>🔊 Slow</Button>
+            <Button onClick={() => { speakWord(currentWord, 0.3); setFeedback(''); focusInput(); }}>🔊 Slow</Button>
           </>
         )}
         {feedback && (
