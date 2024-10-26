@@ -54,6 +54,7 @@ function App3() {
 
       // Get available voices
       const voices = window.speechSynthesis.getVoices()
+      console.log("Voices:", voices)
       console.log("Available voices:", voices.map(v => `${v.name} (${v.lang})`));
 
       // Find a voice that matches the language
@@ -64,7 +65,7 @@ function App3() {
       }
 
       // set the voice variable to be the name of the selected voice, but also add the list of available voices
-      setVoice(`${utterance.voice?.name} Available voices: (${voices.map(v => v.name).join(', ')})`)
+      setVoice(`${utterance.voice?.name} Available voices: (${voices.map(v => `${v.name} (${v.lang})`).join(', ')})`)
 
       // Adjust pitch and rate for better pronunciation
       utterance.pitch = 1
