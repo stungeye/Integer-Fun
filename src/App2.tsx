@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import DrawingCanvas, { DrawingCanvasRef } from '@/components/DrawingCanvas'
-import './App.css'
 import { playSound } from '@/utils/playSound'
 
 function App2() {
