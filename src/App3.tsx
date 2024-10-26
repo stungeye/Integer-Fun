@@ -12,6 +12,7 @@ function App3() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [currentWord, setCurrentWord] = useState('')
   const [userInput, setUserInput] = useState('')
+  const [voice, setVoice] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   const checkAnswer = () => {
@@ -62,6 +63,7 @@ function App3() {
         console.log("Voice found:", voice)
       }
 
+      setVoice(utterance.voice?.name || 'none found')
       // Adjust pitch and rate for better pronunciation
       utterance.pitch = 1
       utterance.rate = 0.8
@@ -159,6 +161,7 @@ function App3() {
             </Button>
           )}
         </div>
+        <p>Voice: {voice}</p>
       </div>
     </div>
   )
