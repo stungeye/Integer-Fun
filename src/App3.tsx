@@ -16,6 +16,10 @@ function App3() {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const checkAnswer = () => {
+    if (userInput.trim() === '') {
+      return;
+    }
+    
     const isCorrect = userInput.trim().toLowerCase() === currentWord.toLowerCase()
     
     if (isCorrect) {
@@ -68,7 +72,7 @@ function App3() {
       }
 
       // set the voice variable to be the name of the selected voice, but also add the list of available voices
-      setVoice(`${utterance.voice?.name} Available voices: (${voices.map(v => `${v.name} (${v.lang})`).join(', ')})`)
+      setVoice(`${utterance.voice?.name} <br>Available voices: (${voices.filter(v => v.lang.includes(currentWordList.language)).map(v => `${v.name} (${v.lang}) ${v.voiceURI}`).join(',<br> ')})`)
 
       // Adjust pitch and rate for better pronunciation
       utterance.pitch = 1
@@ -77,6 +81,18 @@ function App3() {
       window.speechSynthesis.speak(utterance)
     }
   }
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      if (!isCheckDisabled) {
+        checkAnswer();
+      }
+      if (!isNextDisabled) {
+        nextQuestion();
+      }
+    }
+  };
+
 
   useEffect(() => {
     setCurrentWordIndex(0)
@@ -134,7 +150,7 @@ function App3() {
 
       <div className="text-3xl font-bold mb-6 text-center">
         {currentWordList && (
-          <p><Button onClick={() => speakWord(currentWord)}>🔊 Listen</Button></p>
+          <Button onClick={() => { speakWord(currentWord); setFeedback('') }}>🔊 Listen</Button>
         )}
         {feedback && (
           <div className={`text-3xl font-semibold inline-block ml-4 ${
@@ -150,7 +166,8 @@ function App3() {
           ref={inputRef}
           type="text"
           value={userInput}
-          onChange={(e) => setUserInput(e.target.value)}
+          onChange={(e) => { setUserInput(e.target.value); setFeedback('') }}
+          onKeyDown={handleKeyPress}
           placeholder="Enter your answer"
           className="w-full max-w-md p-2 text-xl border rounded"
         />
@@ -167,7 +184,8 @@ function App3() {
             </Button>
           )}
         </div>
-        <p>Voice: {voice}</p>
+        { /* allow dangerous innerHTML */}
+        <p dangerouslySetInnerHTML={{ __html: voice }} />
       </div>
     </div>
   )
