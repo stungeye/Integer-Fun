@@ -12,14 +12,14 @@ function App3() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [currentWord, setCurrentWord] = useState('')
   const [userInput, setUserInput] = useState('')
-  const [voice, setVoice] = useState('')
+  // const [voice, setVoice] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   const checkAnswer = () => {
     if (userInput.trim() === '') {
       return;
     }
-    
+
     const isCorrect = userInput.trim().toLowerCase() === currentWord.toLowerCase()
     
     if (isCorrect) {
@@ -50,7 +50,7 @@ function App3() {
     }
   }
 
-  const speakWord = (word: string) => {
+  const speakWord = (word: string, rate: number = 1) => {
     if (currentWordList && 'speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(word)
       utterance.lang = currentWordList.language
@@ -72,11 +72,11 @@ function App3() {
       }
 
       // set the voice variable to be the name of the selected voice, but also add the list of available voices
-      setVoice(`${utterance.voice?.name} <br>Available voices: (${voices.filter(v => v.lang.includes(currentWordList.language)).map(v => `${v.name} (${v.lang}) ${v.voiceURI}`).join(',<br> ')})`)
+      //setVoice(`${utterance.voice?.name} <br>Available voices: (${voices.filter(v => v.lang.includes(currentWordList.language)).map(v => `${v.name} (${v.lang}) ${v.voiceURI} ${v.localService ? 'local' : 'remote'}`).join(',<br> ')})`)
 
       // Adjust pitch and rate for better pronunciation
       utterance.pitch = 1
-      utterance.rate = 0.8
+      utterance.rate = rate
 
       window.speechSynthesis.speak(utterance)
     }
@@ -150,7 +150,10 @@ function App3() {
 
       <div className="text-3xl font-bold mb-6 text-center">
         {currentWordList && (
-          <Button onClick={() => { speakWord(currentWord); setFeedback('') }}>🔊 Listen</Button>
+          <>
+            <Button onClick={() => { speakWord(currentWord); setFeedback(''); focusInput(); }}>🔊 Listen</Button>
+            <Button onClick={() => { speakWord(currentWord, 0.5); setFeedback(''); focusInput(); }}>🔊 Slow</Button>
+          </>
         )}
         {feedback && (
           <div className={`text-3xl font-semibold inline-block ml-4 ${
@@ -184,8 +187,6 @@ function App3() {
             </Button>
           )}
         </div>
-        { /* allow dangerous innerHTML */}
-        <p dangerouslySetInnerHTML={{ __html: voice }} />
       </div>
     </div>
   )

@@ -19,6 +19,16 @@ export const wordLists: WordList[] = [
   {
     name: "Basic French Words",
     language: "fr-CA",
-    words: ["bonjour", "merci", "oui", "non", "bien", "mal", "grand", "petit", "chien"]
+    words: ["merci", "oui", "non", "bien", "mal", "grand", "petit", "chien"]
+  },
+  // New French word list
+  {
+    name: "Common French Words",
+    language: "fr-CA",
+    words: [
+      "abri", "amour", "avion", "barbe", "bonjour", "date", "groupe", "ligne", "maladie", "mine",
+      "minute", "or", "pile", "poudre", "retenir", "rire", "son", "sorte", "sucre", "tour",
+      "vivre", "vue"
+    ]
   }
 ];
