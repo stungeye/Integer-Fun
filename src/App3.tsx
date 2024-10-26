@@ -63,7 +63,9 @@ function App3() {
         console.log("Voice found:", voice)
       }
 
-      setVoice(utterance.voice?.name || 'none found')
+      // set the voice variable to be the name of the selected voice, but also add the list of available voices
+      setVoice(`${utterance.voice?.name} Available voices: (${voices.map(v => v.name).join(', ')})`)
+
       // Adjust pitch and rate for better pronunciation
       utterance.pitch = 1
       utterance.rate = 0.8
