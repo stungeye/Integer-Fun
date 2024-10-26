@@ -191,9 +191,7 @@ function App2() {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md relative">
-      
-      {/* Score/Streak div positioned in the upper right corner */}
+    <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 relative">
       <div className="absolute top-4 right-4 flex flex-row">
         {!isCheckDisabled && feedback.includes('Incorrect') && (
           // Show Answer button in blue color
@@ -216,29 +214,33 @@ function App2() {
             {feedback}
           </div>
         )}
-
       </div>
-      <input
-        ref={inputRef}
-        type="number"
-        value={userAnswer}
-        onChange={(e) => { setUserAnswer(e.target.value); setFeedback('') }}
-        onKeyDown={handleKeyPress}
-        placeholder="Enter your answer"
-        className="w-full p-2 mb-4 text-xl border rounded"
-      />
-      <div className="flex mt-4 mb-4 justify-center space-x-4">
-        {!isCheckDisabled && (
-          <Button onClick={checkAnswer} size="lg">
-            Check Answer
-          </Button>
-        )}
-        {!isNextDisabled && (
-          <Button onClick={nextQuestion} size="lg">
-            Next Question
-          </Button>
-        )}
-              </div>
+
+      <div className="flex flex-col items-center space-y-4 mt-4 mb-4">
+        <input
+          ref={inputRef}
+          type="number"
+          value={userAnswer}
+          onChange={(e) => { setUserAnswer(e.target.value); setFeedback('') }}
+          onKeyDown={handleKeyPress}
+          placeholder="Enter your answer"
+          className="w-full max-w-md p-2 text-xl border rounded"
+        />
+
+        <div className="flex space-x-4">
+          {!isCheckDisabled && (
+            <Button onClick={checkAnswer} size="lg">
+              Check Answer
+            </Button>
+          )}
+          {!isNextDisabled && (
+            <Button onClick={nextQuestion} size="lg">
+              Next Question
+            </Button>
+          )}
+        </div>
+      </div>
+
       <div ref={containerRef} className="relative" style={{ width: '100%', height: `${canvasSize.height}px` }}>
         <Button 
           onClick={handleClearCanvas}

@@ -124,8 +124,7 @@ const App = () => {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md relative">
-      {/* Add this div for the streak display */}
+    <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 relative">
       <div className="absolute top-4 right-4">
         <div className="bg-gray-100 p-2 rounded-md shadow">
           <p className="text-lg font-semibold">Streak: {streak}</p>
