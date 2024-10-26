@@ -43,7 +43,7 @@ function App3() {
       const nextIndex = (currentWordIndex + 1) % currentWordList.words.length
       setCurrentWordIndex(nextIndex)
       setCurrentWord(currentWordList.words[nextIndex])
-      console.log("Next word:", currentWordList.words[nextIndex])
+      // console.log("Next word:", currentWordList.words[nextIndex])
       setFeedback('')
       setIsCheckDisabled(false)
       setIsNextDisabled(true)
@@ -57,12 +57,12 @@ function App3() {
     if (currentWordList && 'speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(word)
       utterance.lang = currentWordList.language
-      console.log("Speaking word:", word, "in language:", currentWordList.language)
+      // console.log("Speaking word:", word, "in language:", currentWordList.language)
 
       // Get available voices
       const voices = window.speechSynthesis.getVoices()
-      console.log("Voices:", voices)
-      console.log("Available voices:", voices.map(v => `${v.name} (${v.lang})`));
+      // console.log("Voices:", voices)
+      // console.log("Available voices:", voices.map(v => `${v.name} (${v.lang})`));
 
       let voice = voices.find(v => v.name === 'Amélie' && v.lang.includes(currentWordList.language))
       if (!voice) {
@@ -71,7 +71,7 @@ function App3() {
       }
       if (voice) {
         utterance.voice = voice
-        console.log("Voice found:", voice)
+        // console.log("Voice found:", voice)
       }
 
       // set the voice variable to be the name of the selected voice, but also add the list of available voices
@@ -80,15 +80,27 @@ function App3() {
       // Adjust pitch and rate for better pronunciation
       utterance.pitch = 1
       utterance.rate = rate
-
+      window.speechSynthesis.cancel()
       window.speechSynthesis.speak(utterance)
     }
   }
 
+  const fillCorrectAnswer = () => {
+    if (currentWord !== null) {
+      setScore(0);
+      setUserInput(currentWord);
+      setFeedback('')
+    }
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       if (!isCheckDisabled) {
+        if (userInput.trim() === '') {
+          speakWord(currentWord)
+        } else {
         checkAnswer();
+        }
       }
       if (!isNextDisabled) {
         nextQuestion();
@@ -98,8 +110,9 @@ function App3() {
 
 
   useEffect(() => {
-    setCurrentWordIndex(0)
-    setCurrentWord(currentWordList.words[0])
+    const randomIndex = Math.floor(Math.random() * currentWordList.words.length)
+    setCurrentWordIndex(randomIndex)
+    setCurrentWord(currentWordList.words[randomIndex])
     setFeedback('')
     setIsCheckDisabled(false)
     setIsNextDisabled(true)
@@ -145,17 +158,23 @@ function App3() {
         </select>
       </div>
 
-      <div className="absolute top-4 right-4">
-        <div className="bg-gray-100 p-2 rounded-md shadow inline-block">
-          <p className="text-lg font-semibold"> {isIosSafari ? '🍎' : ''} Streak: {score}</p>
+      <div className="absolute top-4 right-4 flex flex-row">
+        {!isCheckDisabled && feedback.includes('Incorrect') && (
+          <Button onClick={fillCorrectAnswer} size="lg" variant="destructive" className="inline-block mr-4">
+            Show Answer
+          </Button>
+        )}
+
+        <div className={`${score >= currentWordList.words.length ? 'bg-green-500' : 'bg-gray-100'} p-2 rounded-md shadow inline-block`}>
+          <p className="text-lg font-semibold">Streak: {score}</p>
         </div>
       </div>
 
-      <div className="text-3xl font-bold mt-6 mb-6 text-center">
+      <div className="text-3xl font-bold mt-12 mb-6 text-center">
         {currentWordList && (
           <>
             <Button onClick={() => { speakWord(currentWord); setFeedback(''); focusInput(); }}>🔊 Listen</Button> &nbsp; 
-            <Button onClick={() => { speakWord(currentWord, isIosSafari ? 0.1 : 0.4); setFeedback(''); focusInput(); }}>🔊 Slow</Button>
+            <Button onClick={() => { speakWord(currentWord, isIosSafari ? 0.5 : 0.3); setFeedback(''); focusInput(); }}>🔊 Slow</Button>
           </>
         )}
         {feedback && (

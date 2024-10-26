@@ -193,7 +193,6 @@ function App2() {
     <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 relative">
       <div className="absolute top-4 right-4 flex flex-row">
         {!isCheckDisabled && feedback.includes('Incorrect') && (
-          // Show Answer button in blue color
           <Button onClick={fillCorrectAnswer} size="lg" variant="destructive" className="inline-block mr-4">
             Show Answer
           </Button>
