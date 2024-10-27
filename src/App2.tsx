@@ -8,9 +8,7 @@ function App2() {
   const [userAnswer, setUserAnswer] = useState('')
   const [feedback, setFeedback] = useState('')
   const [score, setScore] = useState(0)
-  const [isCheckDisabled, setIsCheckDisabled] = useState(false)
-  const [isNextDisabled, setIsNextDisabled] = useState(true)
-  const [correctAnswer, setCorrectAnswer] = useState<number | null>(null)
+  const [isAnswerChecked, setIsAnswerChecked] = useState(false)
   const canvasRef = useRef<DrawingCanvasRef>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
@@ -79,11 +77,9 @@ function App2() {
 
     const expression = generateExpression();
     setQuestion(expression);
-    setCorrectAnswer(calculateAnswer(expression));
     setUserAnswer('');
     setFeedback('');
-    setIsCheckDisabled(false);
-    setIsNextDisabled(true);
+    setIsAnswerChecked(false);
   }
 
   const calculateAnswer = (question: string): number => {
@@ -104,8 +100,7 @@ function App2() {
     if (parseFloat(userAnswer) === correctAnswer) {
       setFeedback('Correct! 🎉')
       setScore(score + 1)
-      setIsCheckDisabled(true)
-      setIsNextDisabled(false)
+      setIsAnswerChecked(true)
       playSound(true);
     } else {
       setScore(0);
@@ -117,9 +112,8 @@ function App2() {
   const nextQuestion = () => {
     generateQuestion()
     handleClearCanvas()
-    setIsCheckDisabled(false)
-    setIsNextDisabled(true)
-    focusInput(); // Focus the input after generating a new question
+    setIsAnswerChecked(false)
+    focusInput();
   }
 
   const formatQuestion = (question: string): string => {
@@ -143,19 +137,16 @@ function App2() {
   };
 
   const fillCorrectAnswer = () => {
-    if (correctAnswer !== null) {
-      setScore(0);
-      setUserAnswer(correctAnswer.toString());
-      setFeedback('')
-    }
+    setScore(0);
+    setUserAnswer(calculateAnswer(question).toString());
+    setFeedback('')
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      if (!isCheckDisabled) {
+      if (!isAnswerChecked) {
         checkAnswer();
-      }
-      if (!isNextDisabled) {
+      } else {
         nextQuestion();
       }
     }
@@ -192,7 +183,7 @@ function App2() {
   return (
     <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 relative">
       <div className="absolute top-4 right-4 flex flex-row">
-        {!isCheckDisabled && feedback.includes('Incorrect') && (
+        {!isAnswerChecked && feedback.includes('Incorrect') && (
           <Button onClick={fillCorrectAnswer} size="lg" variant="destructive" className="inline-block mr-4">
             Show Answer
           </Button>
@@ -226,12 +217,12 @@ function App2() {
         />
 
         <div className="flex space-x-4">
-          {!isCheckDisabled && (
+          {!isAnswerChecked && (
             <Button onClick={checkAnswer} size="lg">
               Check Answer
             </Button>
           )}
-          {!isNextDisabled && (
+          {isAnswerChecked && (
             <Button onClick={nextQuestion} size="lg">
               Next Question
             </Button>

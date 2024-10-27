@@ -5,8 +5,7 @@ import { WordList, wordLists } from '@/data/wordLists'
 
 function App3() {
   const [score, setScore] = useState(0)
-  const [isCheckDisabled, setIsCheckDisabled] = useState(false)
-  const [isNextDisabled, setIsNextDisabled] = useState(true)
+  const [isAnswerChecked, setIsAnswerChecked] = useState(false)
   const [feedback, setFeedback] = useState('')
   const [currentWordList, setCurrentWordList] = useState<WordList>(wordLists[0])
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
@@ -27,8 +26,7 @@ function App3() {
     
     if (isCorrect) {
       setScore(score + 1)
-      setIsCheckDisabled(true)
-      setIsNextDisabled(false)
+      setIsAnswerChecked(true)
       playSound(isCorrect)
       setFeedback('Correct! 🎉')
     } else {
@@ -43,10 +41,8 @@ function App3() {
       const nextIndex = (currentWordIndex + 1) % currentWordList.words.length
       setCurrentWordIndex(nextIndex)
       setCurrentWord(currentWordList.words[nextIndex])
-      // console.log("Next word:", currentWordList.words[nextIndex])
       setFeedback('')
-      setIsCheckDisabled(false)
-      setIsNextDisabled(true)
+      setIsAnswerChecked(false)
       setUserInput('')
       focusInput()
       speakWord(currentWordList.words[nextIndex])
@@ -95,14 +91,13 @@ function App3() {
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      if (!isCheckDisabled) {
+      if (!isAnswerChecked) {
         if (userInput.trim() === '') {
           speakWord(currentWord)
         } else {
-        checkAnswer();
+          checkAnswer();
         }
-      }
-      if (!isNextDisabled) {
+      } else {
         nextQuestion();
       }
     }
@@ -114,8 +109,7 @@ function App3() {
     setCurrentWordIndex(randomIndex)
     setCurrentWord(currentWordList.words[randomIndex])
     setFeedback('')
-    setIsCheckDisabled(false)
-    setIsNextDisabled(true)
+    setIsAnswerChecked(false)
     setUserInput('')
     focusInput()
   }, [currentWordList])
@@ -159,7 +153,7 @@ function App3() {
       </div>
 
       <div className="absolute top-4 right-4 flex flex-row">
-        {!isCheckDisabled && feedback.includes('Incorrect') && (
+        {!isAnswerChecked && feedback.includes('Incorrect') && (
           <Button onClick={fillCorrectAnswer} size="lg" variant="destructive" className="inline-block mr-4">
             Show Answer
           </Button>
@@ -198,12 +192,12 @@ function App3() {
         />
 
         <div className="flex space-x-4">
-          {!isCheckDisabled && (
+          {!isAnswerChecked && (
             <Button onClick={checkAnswer} size="lg">
               Check Answer
             </Button>
           )}
-          {!isNextDisabled && (
+          {isAnswerChecked && (
             <Button onClick={nextQuestion} size="lg">
               Next Question
             </Button>

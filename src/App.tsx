@@ -72,17 +72,13 @@ const NumberLine = ({ min, max, value, onChange, startNumber }: { min: number, m
 };
 
 const App = () => {
-  const [question, setQuestion] = useState(generateQuestion());
-  const [userAnswer, setUserAnswer] = useState(0);
+  const initialQuestion = generateQuestion();
+  const [question, setQuestion] = useState(initialQuestion);
+  const [userAnswer, setUserAnswer] = useState(initialQuestion.num1);
   const [feedback, setFeedback] = useState('');
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [isCorrect, setIsCorrect] = useState(false);
   const [streak, setStreak] = useState(0);
-  const [isCheckDisabled, setIsCheckDisabled] = useState(false);
-  const [isNextDisabled, setIsNextDisabled] = useState(true);  // New state for Next Question button
-
-  useEffect(() => {
-    setUserAnswer(question.num1);
-  }, [question]);
+  const [isAnswerChecked, setIsAnswerChecked] = useState(false);
 
   const checkAnswer = () => {
     const correctAnswer = calculateAnswer(question.num1, question.num2, question.operation);
@@ -92,8 +88,7 @@ const App = () => {
       setIsCorrect(true);
       setFeedback('Correct! Well done!');
       setStreak(prevStreak => prevStreak + 1);
-      setIsCheckDisabled(true);
-      setIsNextDisabled(false);  // Enable the Next Question button
+      setIsAnswerChecked(true);
       playSound(true);
     } else if (difference === 2) {
       setIsCorrect(false);
@@ -116,11 +111,10 @@ const App = () => {
   const nextQuestion = () => {
     const newQuestion = generateQuestion();
     setQuestion(newQuestion);
-    setUserAnswer(newQuestion.num1);
+    setUserAnswer(newQuestion.num1);  // Set initial user answer to num1
     setFeedback('');
-    setIsCorrect(null);
-    setIsCheckDisabled(false);
-    setIsNextDisabled(true);  // Disable the Next Question button again
+    setIsCorrect(false);
+    setIsAnswerChecked(false);
   };
 
   return (
@@ -136,8 +130,8 @@ const App = () => {
       </div>
       <NumberLine min={-20} max={20} value={userAnswer} onChange={setUserAnswer} startNumber={question.num1} />
       <div className="flex mt-12 justify-center space-x-4">
-        {!isCheckDisabled && <Button onClick={checkAnswer} size="lg" disabled={isCheckDisabled}>Check Answer</Button>}
-        {!isNextDisabled && <Button onClick={nextQuestion} size="lg" disabled={isNextDisabled}>Next Question</Button>}
+        {!isAnswerChecked && <Button onClick={checkAnswer} size="lg">Check Answer</Button>}
+        {isAnswerChecked && <Button onClick={nextQuestion} size="lg">Next Question</Button>}
       </div>
       {feedback && (
         <div className={`mt-6 text-xl font-semibold text-center ${
