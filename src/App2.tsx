@@ -155,7 +155,6 @@ function App2() {
   // Generate the first question when the component mounts
   useEffect(() => {
     nextQuestion();
-    focusInput(); // Focus the input when the component mounts
   }, []);
 
   useEffect(() => {
