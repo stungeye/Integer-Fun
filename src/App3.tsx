@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { playSound } from '@/utils/playSound'
 import { Button } from '@/components/ui/button'
 import { WordList, wordLists } from '@/data/wordLists'
+import CustomInput from '@/components/CustomInput'
 
 function App3() {
   const [score, setScore] = useState(0)
@@ -11,11 +12,8 @@ function App3() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [currentWord, setCurrentWord] = useState('')
   const [userInput, setUserInput] = useState('')
-  // const [voice, setVoice] = useState('')
-  const inputRef = useRef<HTMLInputElement>(null)
-  // detect ios safari
+  const [focusCounter, setFocusCounter] = useState(0)
   const isIosSafari = /iPad|iPhone|iPod/.test(navigator.userAgent)
-
 
   const checkAnswer = () => {
     if (userInput.trim() === '') {
@@ -36,15 +34,19 @@ function App3() {
     }
   }
 
+  const prepareForNextTry = () => {
+    setFeedback('')
+    setFocusCounter(prev => prev + 1)
+  }
+
   const nextQuestion = () => {
     if (currentWordList) {
       const nextIndex = (currentWordIndex + 1) % currentWordList.words.length
       setCurrentWordIndex(nextIndex)
       setCurrentWord(currentWordList.words[nextIndex])
-      setFeedback('')
       setIsAnswerChecked(false)
       setUserInput('')
-      focusInput()
+      prepareForNextTry()
       speakWord(currentWordList.words[nextIndex])
     }
   }
@@ -53,12 +55,7 @@ function App3() {
     if (currentWordList && 'speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(word)
       utterance.lang = currentWordList.language
-      // console.log("Speaking word:", word, "in language:", currentWordList.language)
-
-      // Get available voices
       const voices = window.speechSynthesis.getVoices()
-      // console.log("Voices:", voices)
-      // console.log("Available voices:", voices.map(v => `${v.name} (${v.lang})`));
 
       let voice = voices.find(v => v.name === 'Amélie' && v.lang.includes(currentWordList.language))
       if (!voice) {
@@ -67,14 +64,8 @@ function App3() {
       }
       if (voice) {
         utterance.voice = voice
-        // console.log("Voice found:", voice)
       }
 
-      // set the voice variable to be the name of the selected voice, but also add the list of available voices
-      //setVoice(`${utterance.voice?.name} <br>Available voices: (${voices.filter(v => v.lang.includes(currentWordList.language)).map(v => `${v.name} (${v.lang}) ${v.voiceURI} ${v.localService ? 'local' : 'remote'}`).join(',<br> ')})`)
-
-      // Adjust pitch and rate for better pronunciation
-      utterance.pitch = 1
       utterance.rate = rate
       window.speechSynthesis.cancel()
       window.speechSynthesis.speak(utterance)
@@ -86,32 +77,29 @@ function App3() {
       setScore(0);
       setUserInput(currentWord);
       setFeedback('')
+      setFocusCounter(prev => prev + 1)
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      if (!isAnswerChecked) {
-        if (userInput.trim() === '') {
-          speakWord(currentWord)
-        } else {
-          checkAnswer();
-        }
+  const handleEnterPress = () => {
+    if (!isAnswerChecked) {
+      if (userInput.trim() === '') {
+        speakWord(currentWord)
       } else {
-        nextQuestion();
+        checkAnswer();
       }
+    } else {
+      nextQuestion();
     }
   };
-
 
   useEffect(() => {
     const randomIndex = Math.floor(Math.random() * currentWordList.words.length)
     setCurrentWordIndex(randomIndex)
     setCurrentWord(currentWordList.words[randomIndex])
-    setFeedback('')
     setIsAnswerChecked(false)
     setUserInput('')
-    focusInput()
+    prepareForNextTry()
   }, [currentWordList])
 
   useEffect(() => {
@@ -124,10 +112,6 @@ function App3() {
     // Some browsers need a little time to load voices
     window.speechSynthesis.onvoiceschanged = loadVoices
   }, [])
-
-  const focusInput = () => {
-    inputRef.current?.focus()
-  }
 
   const handleWordListChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedList = wordLists.find(list => list.name === event.target.value);
@@ -167,8 +151,8 @@ function App3() {
       <div className="text-3xl font-bold mt-12 mb-6 text-center">
         {currentWordList && (
           <>
-            <Button onClick={() => { speakWord(currentWord); setFeedback(''); focusInput(); }}>🔊 Listen</Button> &nbsp; 
-            <Button onClick={() => { speakWord(currentWord, isIosSafari ? 0.5 : 0.3); setFeedback(''); focusInput(); }}>🔊 Slow</Button>
+            <Button onClick={() => { speakWord(currentWord); prepareForNextTry(); }}>🔊 Listen</Button> &nbsp; 
+            <Button onClick={() => { speakWord(currentWord, isIosSafari ? 0.5 : 0.3); prepareForNextTry() }}>🔊 Slow</Button>
           </>
         )}
         {feedback && (
@@ -181,13 +165,16 @@ function App3() {
       </div>
 
       <div className="flex flex-col items-center space-y-4 mt-4 mb-4">
-        <input
-          ref={inputRef}
+        <CustomInput
           type="text"
           value={userInput}
-          onChange={(e) => { setUserInput(e.target.value); setFeedback('') }}
-          onKeyDown={handleKeyPress}
+          onChange={(e) => { 
+            setUserInput(e.target.value); 
+            setFeedback('') 
+          }}
+          onEnterPress={handleEnterPress}
           placeholder="Enter your answer"
+          focusCounter={focusCounter}
           className="w-full max-w-md p-2 text-xl border rounded"
         />
 

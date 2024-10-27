@@ -2,7 +2,7 @@ import { StrictMode, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import App2 from './App2.tsx'  // Assume this is your new PEDMAS app
-import App3 from './App3'
+import App3 from './App3.tsx'
 import './index.css'
 
 function Main() {

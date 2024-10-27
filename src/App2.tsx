@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import DrawingCanvas, { DrawingCanvasRef } from '@/components/DrawingCanvas'
 import { playSound } from '@/utils/playSound'
+import CustomInput from '@/components/CustomInput'
 
 function App2() {
   const [question, setQuestion] = useState('')
@@ -12,7 +13,7 @@ function App2() {
   const canvasRef = useRef<DrawingCanvasRef>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [focusCounter, setFocusCounter] = useState(0);
 
   const handleClearCanvas = () => {
     canvasRef.current?.clearCanvas();
@@ -92,7 +93,7 @@ function App2() {
 
   const checkAnswer = () => {
     if (userAnswer === '') {
-      focusInput();
+    setFocusCounter(prev => prev + 1);
       return;
     }
 
@@ -113,7 +114,7 @@ function App2() {
     generateQuestion()
     handleClearCanvas()
     setIsAnswerChecked(false)
-    focusInput();
+    setFocusCounter(prev => prev + 1);
   }
 
   const formatQuestion = (question: string): string => {
@@ -140,16 +141,7 @@ function App2() {
     setScore(0);
     setUserAnswer(calculateAnswer(question).toString());
     setFeedback('')
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      if (!isAnswerChecked) {
-        checkAnswer();
-      } else {
-        nextQuestion();
-      }
-    }
+    setFocusCounter(prev => prev + 1);
   };
 
   // Generate the first question when the component mounts
@@ -175,8 +167,13 @@ function App2() {
     return () => window.removeEventListener('resize', updateCanvasSize);
   }, []);
 
-  const focusInput = () => {
-    inputRef.current?.focus();
+
+  const handleEnterPress = () => {
+    if (!isAnswerChecked) {
+      checkAnswer();
+    } else {
+      nextQuestion();
+    }
   };
 
   return (
@@ -205,13 +202,16 @@ function App2() {
       </div>
 
       <div className="flex flex-col items-center space-y-4 mt-4 mb-4">
-        <input
-          ref={inputRef}
+        <CustomInput
           type="number"
           value={userAnswer}
-          onChange={(e) => { setUserAnswer(e.target.value); setFeedback('') }}
-          onKeyDown={handleKeyPress}
+          onChange={(e) => { 
+            setUserAnswer(e.target.value); 
+            setFeedback('');
+          }}
+          onEnterPress={handleEnterPress}
           placeholder="Enter your answer"
+          focusCounter={focusCounter}
           className="w-full max-w-md p-2 text-xl border rounded"
         />
 
