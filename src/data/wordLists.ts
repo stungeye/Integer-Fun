@@ -30,5 +30,15 @@ export const wordLists: WordList[] = [
       "minute", "or", "pile", "poudre", "retenir", "rire", "son", "sorte", "sucre", "tour",
       "vivre", "vue"
     ]
+  },
+  {
+    name: "French G-Words",
+    language: "fr-CA",
+    words: [
+      "âge", "argent", "danger", "gagner", "garder",
+      "genre", "gorge", "goutte", "guerre", "langue",
+      "magasin", "ménage", "nuage", "protéger", "village",
+      "voyage"
+    ]
   }
 ];
