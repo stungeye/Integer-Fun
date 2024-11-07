@@ -1,25 +1,28 @@
-import { StrictMode, useState } from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import App2 from './App2.tsx'  // Assume this is your new PEDMAS app
-import App3 from './App3.tsx'
-import './index.css'
+import { StrictMode, useState } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.tsx";
+import App2 from "./App2.tsx"; // Assume this is your new PEDMAS app
+import App3 from "./App3.tsx";
+import App4 from "./App4.tsx";
+import "./index.css";
 
 function Main() {
-  const [selectedApp, setSelectedApp] = useState('App1')
+  const [selectedApp, setSelectedApp] = useState("App1");
 
   const renderSelectedApp = () => {
     switch (selectedApp) {
-      case 'App1':
-        return <App />
-      case 'App2':
-        return <App2 />
-      case 'App3':
-        return <App3 />
+      case "App1":
+        return <App />;
+      case "App2":
+        return <App2 />;
+      case "App3":
+        return <App3 />;
+      case "App4":
+        return <App4 />;
       default:
-        return <App />
+        return <App />;
     }
-  }
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -31,14 +34,15 @@ function Main() {
         <option value="App1">Addition / Subtraction</option>
         <option value="App2">PEDMAS</option>
         <option value="App3">Spelling</option>
+        <option value="App4">Estimation</option>
       </select>
       {renderSelectedApp()}
     </div>
-  )
+  );
 }
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Main />
-  </StrictMode>,
-)
+  </StrictMode>
+);
