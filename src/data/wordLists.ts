@@ -213,4 +213,23 @@ export const wordLists: WordList[] = [
       "terrain",
     ],
   },
+  {
+    name: "Des Mot: M",
+    language: "fr-CA",
+    words: [
+      "ampoule",
+      "champ",
+      "compter",
+      "décembre",
+      "embrasser",
+      "ensemble",
+      "important",
+      "jambe",
+      "longtemps",
+      "nombre",
+      "novembre",
+      "ombre",
+      "septembre",
+    ],
+  },
 ];
