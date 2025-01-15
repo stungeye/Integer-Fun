@@ -240,7 +240,7 @@ export const wordLists: WordList[] = [
       "février",
       "fil",
       "film",
-      "fleur",
+      "fleuve",
       "fol",
       "folle",
       "fou",
