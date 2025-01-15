@@ -232,4 +232,22 @@ export const wordLists: WordList[] = [
       "septembre",
     ],
   },
+  {
+    name: "Des Mot: F",
+    language: "fr-CA",
+    words: [
+      "alphabet",
+      "février",
+      "fil",
+      "film",
+      "fleur",
+      "fol",
+      "folle",
+      "fou",
+      "frapper",
+      "photo",
+      "préféré",
+      "téléphone",
+    ],
+  },
 ];
