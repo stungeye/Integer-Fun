@@ -6,45 +6,6 @@ export interface WordList {
 
 export const wordLists: WordList[] = [
   {
-    name: "Basic English Words",
-    language: "en-CA",
-    words: [
-      "apple",
-      "banana",
-      "cat",
-      "dog",
-      "elephant",
-      "frog",
-      "giraffe",
-      "house",
-      "ice cream",
-      "jacket",
-    ],
-  },
-  {
-    name: "Intermediate English Words",
-    language: "en-CA",
-    words: [
-      "beautiful",
-      "curious",
-      "delightful",
-      "enormous",
-      "fantastic",
-      "graceful",
-      "harmonious",
-      "incredible",
-      "jubilant",
-      "knowledge",
-    ],
-  },
-  // Basic French Words
-  {
-    name: "Basic French Words",
-    language: "fr-CA",
-    words: ["merci", "oui", "non", "bien", "mal", "grand", "petit", "chien"],
-  },
-  // New French word list
-  {
     name: "Common French Words",
     language: "fr-CA",
     words: [
@@ -324,6 +285,32 @@ export const wordLists: WordList[] = [
       "sujet",
       "vêtement",
       "vinaigre",
+    ],
+  },
+  {
+    name: "Action et Temps",
+    language: "fr-CA",
+    words: [
+      "année",
+      "apporter",
+      "attraper",
+      "chez",
+      "crier",
+      "diriger",
+      "écrire",
+      "espérer",
+      "étoile",
+      "jeter",
+      "mai",
+      "mener",
+      "montrer",
+      "porter",
+      "rappeler",
+      "remonter",
+      "retourner",
+      "soirée",
+      "tirer",
+      "tuer",
     ],
   },
 ];
