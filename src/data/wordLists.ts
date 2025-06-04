@@ -562,4 +562,22 @@ export const wordLists: WordList[] = [
       "quelqu'une",
     ],
   },
+  {
+    name: "🦓 Words for Zebras",
+    language: "fr-CA",
+    words: [
+      "bientôt",
+      "car",
+      "combien",
+      "contre",
+      "d'abord",
+      "dedans",
+      "dehors",
+      "demain",
+      "dès que",
+      "mal",
+      "plusieurs",
+      "sans que",
+    ],
+  },
 ];
