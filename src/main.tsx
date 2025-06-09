@@ -4,6 +4,8 @@ import App from "./App.tsx";
 import App2 from "./App2.tsx"; // Assume this is your new PEDMAS app
 import App3 from "./App3.tsx";
 import App4 from "./App4.tsx";
+import App5 from "./App5.tsx";
+import App6 from "./App6.tsx"; // Added import for App6
 import "./index.css";
 
 function Main() {
@@ -19,6 +21,10 @@ function Main() {
         return <App3 />;
       case "App4":
         return <App4 />;
+      case "App5":
+        return <App5 />;
+      case "App6":
+        return <App6 />;
       default:
         return <App />;
     }
@@ -35,6 +41,8 @@ function Main() {
         <option value="App2">PEDMAS</option>
         <option value="App3">Spelling</option>
         <option value="App4">Estimation</option>
+        <option value="App5">Square Roots</option>
+        <option value="App6">Pythagorean Theorem</option> {/* Added App6 */}
       </select>
       {renderSelectedApp()}
     </div>
