@@ -28,6 +28,7 @@ function App6() {
     const savedDifficulty = localStorage.getItem("pythagoreanDifficulty");
     return (savedDifficulty as Difficulty) || "Medium";
   });
+  const [showHelpModal, setShowHelpModal] = useState(false); // State for help modal
 
   const canvasRef = useRef<DrawingCanvasRef>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -216,13 +217,82 @@ function App6() {
 
   return (
     <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 relative">
-      <div className="absolute top-4 right-4 flex flex-row">
+      <div className="absolute top-4 right-4 flex flex-row items-center space-x-2">
+        <Button
+          onClick={() => setShowHelpModal(true)}
+          variant="outline"
+          size="sm"
+        >
+          Help
+        </Button>
         <div className="bg-gray-100 p-2 rounded-md shadow inline-block">
           <p className="text-lg font-semibold">Streak: {score}</p>
         </div>
       </div>
 
-      <div className="text-2xl font-bold mb-2 text-center">
+      {/* Help Modal */}
+      {showHelpModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-5xl w-full">
+            <h3 className="text-2xl font-bold mb-4">
+              How to Find the Missing Side
+            </h3>
+            <p className="mb-2">
+              The Pythagorean theorem states: <strong>a² + b² = c²</strong>,
+              where 'a' and 'b' are the lengths of the two shorter sides (legs)
+              of a right-angle triangle, and 'c' is the length of the longest
+              side (hypotenuse).
+            </p>
+
+            <h4 className="text-xl font-semibold mt-4 mb-2">
+              1. Finding the Hypotenuse (c)
+            </h4>
+            <p className="mb-2">
+              If you know the lengths of the two legs (a and b), you can find
+              the hypotenuse (c) using:
+            </p>
+            <p className="mb-2 text-center bg-gray-100 p-2 rounded">
+              <strong>c = √(a² + b²)</strong>
+            </p>
+            <p className="mb-2">Example: If a = 3 and b = 4:</p>
+            <ul className="list-disc list-inside mb-2 space-y-1 pl-4">
+              <li>a² = 3 x 3 = 9</li>
+              <li>b² = 4 x 4 = 16</li>
+              <li>a² + b² = 9 + 16 = 25</li>
+              <li>c = √25 = 5</li>
+            </ul>
+
+            <h4 className="text-xl font-semibold mt-4 mb-2">
+              2. Finding a Leg (e.g., a)
+            </h4>
+            <p className="mb-2">
+              If you know the length of the hypotenuse (c) and one leg (e.g.,
+              b), you can find the other leg (a) using:
+            </p>
+            <p className="mb-2 text-center bg-gray-100 p-2 rounded">
+              <strong>a = √(c² - b²)</strong>
+            </p>
+            <p className="mb-2">Example: If c = 5 and b = 4:</p>
+            <ul className="list-disc list-inside mb-4 space-y-1 pl-4">
+              <li>c² = 5 x 5 = 25</li>
+              <li>b² = 4 x 4 = 16</li>
+              <li>c² - b² = 25 - 16 = 9</li>
+              <li>a = √9 = 3</li>
+            </ul>
+            <p className="text-sm mb-3">
+              Remember to estimate the square root if the result is not a
+              perfect square (e.g., √8 ≈ 2.8).
+            </p>
+            <Button onClick={() => setShowHelpModal(false)} className="w-full">
+              Close
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <div className="text-2xl font-bold mb-2 text-center pt-10">
+        {" "}
+        {/* Added pt-10 for spacing */}
         Find the missing length?
       </div>
       <div className="text-xl italic mb-4 text-center">a² + b² = c²</div>

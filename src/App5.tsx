@@ -17,6 +17,7 @@ function App5() {
     const savedDifficulty = localStorage.getItem("sqrtDifficulty");
     return (savedDifficulty as Difficulty) || "Medium";
   });
+  const [showHelpModal, setShowHelpModal] = useState(false); // State for help modal
 
   const canvasRef = useRef<DrawingCanvasRef>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -134,13 +135,60 @@ function App5() {
 
   return (
     <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 relative">
-      <div className="absolute top-4 right-4 flex flex-row">
+      <div className="absolute top-4 right-4 flex flex-row items-center space-x-2">
+        <Button
+          onClick={() => setShowHelpModal(true)}
+          variant="outline"
+          size="sm"
+        >
+          Help
+        </Button>
         <div className="bg-gray-100 p-2 rounded-md shadow inline-block">
           <p className="text-lg font-semibold">Streak: {score}</p>
         </div>
       </div>
 
-      <div className="text-3xl font-bold mb-6 text-center">
+      {/* Help Modal */}
+      {showHelpModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-3xl w-full">
+            <h3 className="text-2xl font-bold mb-4">
+              How to Estimate Square Roots
+            </h3>
+            <p className="mb-2">
+              To estimate the square root of a number (example: √57), find the
+              two perfect squares it lies between.
+            </p>
+            <ul className="list-disc list-inside mb-2 space-y-1">
+              <li>7 x 7 = 49</li>
+              <li>8 x 8 = 64</li>
+            </ul>
+            <p className="mb-2">
+              Since 57 is between 49 and 64, √57 must be between 7 and 8.
+            </p>
+            <p className="mb-2">To get a closer estimate:</p>
+            <ul className="list-disc list-inside mb-4 space-y-1">
+              <li>
+                See which perfect square 57 is closer to: 57 is 8 away from 49,
+                and 7 away from 64. It's slightly closer to 64, which means the
+                answer is closer to 8 than 7.
+              </li>
+              <li>
+                This means √57 should be a bit more than 7.5, perhaps around 7.5
+                or 7.6.
+              </li>
+              <li>(Actual √57 ≈ 7.55)</li>
+            </ul>
+            <Button onClick={() => setShowHelpModal(false)} className="w-full">
+              Close
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <div className="text-3xl font-bold mb-6 text-center pt-10">
+        {" "}
+        {/* Added pt-10 for spacing below help/streak */}
         {currentNumber !== null && <span>Estimate: √{currentNumber} ≈ ?</span>}
       </div>
 
