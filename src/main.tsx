@@ -7,6 +7,7 @@ import App4 from "./App4.tsx";
 import App5 from "./App5.tsx";
 import App6 from "./App6.tsx"; // Added import for App6
 import App7 from "./App7.tsx"; // Added import for App7
+import App8 from "./App8.tsx"; // Added import for App8
 import "./index.css";
 
 function Main() {
@@ -28,6 +29,8 @@ function Main() {
         return <App6 />;
       case "App7": // Added case for App7
         return <App7 />;
+      case "App8": // Added case for App7
+        return <App8 />;
       default:
         return <App />;
     }
@@ -47,6 +50,7 @@ function Main() {
         <option value="App5">Square Roots</option>
         <option value="App6">Pythagorean Theorem</option> {/* Added App6 */}
         <option value="App7">Geometry Calculations</option> {/* Added App7 */}
+        <option value="App8">Algebra Fun!</option> {/* Added App8 */}
       </select>
       {renderSelectedApp()}
     </div>
